@@ -325,6 +325,26 @@ chmod +x /etc/rc.d/rc.local
 ```
 最后重启系统生效(没找到不重启的办法)
 
+
+
+### 旧版集群启动
+
+```
+redis-server /usr/local/redis-3.2.6/redis_cluster/7000/redis.conf
+
+redis-server /usr/local/redis-3.2.6/redis_cluster/7001/redis.conf
+
+redis-server /usr/local/redis-3.2.6/redis_cluster/7002/redis.conf
+
+redis-server /usr/local/redis-3.2.6/redis_cluster/7003/redis.conf
+
+redis-server /usr/local/redis-3.2.6/redis_cluster/7004/redis.conf
+
+redis-server /usr/local/redis-3.2.6/redis_cluster/7005/redis.conf
+```
+
+
+
 ### 关闭
 
 关闭redis, 不要直接kill -9 pid, 以保证数据的安全与完整。 
