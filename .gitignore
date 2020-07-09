@@ -1,0 +1,56 @@
+HELP.md
+target/
+logs/
+ͨѶЭ��/
+����Э��/
+�����ֲ�/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### VS Code ###
+.vscode/
+/其他协议/T-REC-H.264-201704-S!!PDF-E.pdf
+/通讯协议/GBT 28181-2016 公共安全视频监控联网系统信息传输、交换、控制技术.pdf
+/通讯协议/JTT 1076-2016 道路运输车辆卫星定位系统 车载视频终端技术要求.pdf
+/通讯协议/JTT 1077-2016 道路运输车辆卫星定位系统视频 平台技术要求.pdf
+/通讯协议/JTT 1078-2016 道路运输车辆卫星定位系统视频通信协议.pdf
+/通讯协议/JTT 1078-2016 道路运输车辆卫星定位系统车载视频通信协议.pdf
+/通讯协议/JTT 415-2006 道路运输电子政务平台编目编码规则.pdf
+/通讯协议/JTT 794-2011 道路运输车辆卫星定位系统 车载终端技术要求.pdf
+/通讯协议/JTT 794-2019 道路运输车辆卫星定位系统车载终端技术要求.pdf
+/通讯协议/JTT 796-2011 道路运输车辆卫星定位系统 平台技术要求.pdf
+/通讯协议/JTT 808-2011 道路运输车辆卫星定位系统终端通讯协议及数据格式.pdf
+/通讯协议/JTT 808-2011 道路运输车辆卫星定位系统终端通讯协议及数据格式_wrapper.pdf
+/通讯协议/JTT 808-2013 道路运输车辆卫星定位系统北斗兼容车载终端通讯协议技术规范.pdf
+/通讯协议/JTT 808-2019 道路运输车辆卫星定位系统终端通讯协议及数据格式.pdf
+/通讯协议/JTT 809-2011 道路运输车辆卫星定位系统 平台数据交换.pdf
+/通讯协议/ONVIF的核心规范2.2-ReleaseNotes-ONVIF-CC-CoreSpec2.0-ReleaseNotes.pdf
+/通讯协议/TJSATL 12-2017 道路运输车辆主动安全智能防控系统通讯协议规范.pdf
+/通讯协议/城市公共汽电车车载智能服务终端与调度中心间数据通信协议_20160504（信息港）.doc
+/通讯协议/锐明视讯网络通讯协议2018090401(V1.0.5)_935.pdf
+/阿里手册/阿里巴巴Java开发手册（华山版）.pdf
+/阿里手册/阿里巴巴java开发手册（泰山版）.pdf
