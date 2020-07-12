@@ -14,11 +14,11 @@ centos 对应的是 Red Hat Enterprise Linux / Oracle Linux
 2. 利用wget 下载
 ```
 cd /data
-// 创建一个目录 mysql目录
+# 创建一个目录 mysql目录
 mkdir /data/mysql
-// 进入 /data/mysql目录
+# 进入 /data/mysql目录
 cd ./mysql
-// 下载文件
+# 下载文件
 wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.28-linux-glibc2.12-x86_64.tar.gz
 或
 wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.28-el7-x86_64.tar.gz
@@ -400,14 +400,38 @@ flush privileges;
 ### 查看进程列表
 
 ```sql
-// 只列出当前100条
+# 只列出当前100条
 SHOW processlist;
 ```
 
 ```sql
-// 列出所有
+# 列出所有
 SHOW FULL processlist;
 ```
+
+```
+# kill线程
+kill processlist_id
+```
+
+```
+mysql> show processlist;
++----+------+---------------------+--------------------+---------+------+
+| Id | User | Host                | db                 | Command | Time | 
++----+------+---------------------+--------------------+---------+------+
+| 36 | root | 172.16.100.19:7954  | tpcc_test          | Sleep   |    8 |
+| 37 | root | 172.16.100.19:7969  | tpcc_test          | Sleep   |    8 |
+| 42 | root | localhost           | NULL               | Query   |    0 | 
+| 43 | root | 10.0.102.204:49224  | employees          | Sleep   | 2564 |
+| 44 | root | 172.16.100.19:14529 | NULL               | Sleep   | 2322 |
+| 45 | root | 172.16.100.19:14770 | information_schema | Sleep   | 2315 |
++----+------+---------------------+--------------------+---------+------+-------------+
+6 rows in set (0.00 sec)
+
+mysql> kill 43;              #kill掉43线程
+```
+
+
 
 ### 清空表
 
@@ -419,6 +443,137 @@ TRUNCATE TABLE 表名;
 // 速度慢 可恢复 不重置自增长id
 DELETE FROM 表名;
 ```
+
+
+
+### 占空间统计
+
+```
+# 必须进入这个库先
+use information_schema;
+```
+
+```
+# 查看指定库的大小 如 pass 库
+SELECT
+	concat(
+		round(
+			sum(data_length / 1024 / 1024),
+			2
+		),
+		'MB'
+	) AS DATA
+FROM
+	TABLES
+WHERE
+	table_schema = 'pass';
+```
+
+```
+# 查看指定表大小 如 pass 库下的 t_syslog 表
+SELECT
+	concat(
+		round(
+			sum(data_length / 1024 / 1024),
+			2
+		),
+		'MB'
+	) AS DATA
+FROM
+	TABLES
+WHERE
+	table_schema = 'pass'
+AND table_name = 't_syslog';
+```
+
+```
+# 查看所有数据库容量大小
+SELECT
+	table_schema AS '数据库',
+	sum(table_rows) AS '记录数',
+	sum(
+		TRUNCATE (data_length / 1024 / 1024, 2)
+	) AS '数据容量(MB)',
+	sum(
+		TRUNCATE (index_length / 1024 / 1024, 2)
+	) AS '索引容量(MB)'
+FROM
+	information_schema. TABLES
+GROUP BY
+	table_schema
+ORDER BY
+	sum(data_length) DESC,
+	sum(index_length) DESC;
+```
+
+```
+# 查看所有数据库各表容量大小
+SELECT
+	table_schema AS '数据库',
+	table_name AS '表名',
+	table_rows AS '记录数',
+	TRUNCATE (data_length / 1024 / 1024, 2) AS '数据容量(MB)',
+	TRUNCATE (index_length / 1024 / 1024, 2) AS '索引容量(MB)'
+FROM
+	information_schema. TABLES
+ORDER BY
+	data_length DESC,
+	index_length DESC;
+```
+
+```
+# 查看指定数据库容量大小 如 mysql库
+SELECT
+	table_schema AS '数据库',
+	sum(table_rows) AS '记录数',
+	sum(
+		TRUNCATE (data_length / 1024 / 1024, 2)
+	) AS '数据容量(MB)',
+	sum(
+		TRUNCATE (index_length / 1024 / 1024, 2)
+	) AS '索引容量(MB)'
+FROM
+	information_schema. TABLES
+WHERE
+	table_schema = 'mysql';
+```
+
+```
+# 查看指定数据库各表容量大小 如mysql下的所有表
+SELECT
+	table_schema AS '数据库',
+	table_name AS '表名',
+	table_rows AS '记录数',
+	TRUNCATE (data_length / 1024 / 1024, 2) AS '数据容量(MB)',
+	TRUNCATE (index_length / 1024 / 1024, 2) AS '索引容量(MB)'
+FROM
+	information_schema. TABLES
+WHERE
+	table_schema = 'mysql'
+ORDER BY
+	data_length DESC,
+	index_length DESC;
+```
+
+
+
+
+
+### 格式化数字
+
+```
+# 格式化数字补0  参数 数值, 共多少位, 用0填充
+SELECT LPAD(12, 6 , 0)
+# 输出 000012
+```
+
+### 连接字符串
+
+```
+# 输出 CAR123
+SELECT CONCAT('CAR', '123')
+```
+
 
 
 ## 分区表
@@ -655,3 +810,315 @@ FLUSH PRIVILEGES;
 default-time_zone = '+00:00'
 ```
 
+
+
+## Windows Zip版本安装
+
+### 安装与配置
+
+1.下载
+
+```
+# 直接下载
+https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.30-winx64.zip
+```
+
+2. 解压
+
+```
+# 如解压到E盘下的指定目录
+E:\data\mysql-5.7.28-winx64
+```
+
+3. 配置环境变量
+
+```
+# 将bin添加到系统变量 path最后面, 注意与其他变量使用;分开
+;E:\data\mysql-5.7.30-winx64\bin
+```
+
+4. 创建配置文件 my.ini
+
+```
+# 在E:\data\mysql-5.7.28-winx64目录下创建 my.ini
+```
+```
+# 注意 my.ini 必须存为 ANSI编码格式, 其他格式可能无法启动服务
+# For advice on how to change settings please see
+# http://dev.mysql.com/doc/refman/5.7/en/server-configuration-defaults.html
+
+[client]
+port = 3306
+
+[mysqld]
+
+# 不区分大小写
+lower_case_table_names = 1
+
+# Mysql服务的唯一编号 每个mysql服务Id需唯一
+# server-id = 1
+
+# 服务端口号 默认3306
+port = 3306
+
+# mysql安装根目录
+basedir = E:\data\mysql-5.7.30-winx64
+
+# mysql数据文件所在位置
+datadir = E:\data\mysql-5.7.30-winx64\data
+
+# 设置mysql客户端默认字符集
+character-set-server=utf8
+ 
+collation-server=utf8_general_ci
+
+# 时区 00:00 如果需要做国际化时可以设置 否则使用当前服务器时区
+default-time_zone = '+00:00'
+
+# 只能用IP地址检查客户端的登录，不用主机名
+skip_name_resolve = 1
+
+# SQL数据包发送的大小，如果有BLOB对象建议修改成1G
+max_allowed_packet = 10M
+
+# MySQL连接闲置超过一定时间后(单位：秒)将会被强行关闭
+# MySQL默认的wait_timeout  值为8个小时, interactive_timeout参数需要同时配置才能生效
+interactive_timeout = 1800
+wait_timeout = 1800
+
+# 内部内存临时表的最大值 ，设置成128M。
+# 比如大数据量的group by ,order by时可能用到临时表，
+# 超过了这个值将写入磁盘，系统IO压力增大
+tmp_table_size = 134217728
+max_heap_table_size = 134217728
+
+# 关闭关于 TIMESTAMP with implicit DEFAULT value is deprecated. 的警告
+explicit_defaults_for_timestamp = true
+
+# 开启事件功能
+event_scheduler= ON
+
+#日志设置
+
+# 数据库错误日志文件
+log_error = E:\data\mysql-5.7.30-winx64\logs\error.log
+
+# 慢查询sql日志设置
+slow_query_log = 1
+slow_query_log_file = E:\data\mysql-5.7.30-winx64\logs\slow.log
+
+# 检查未使用到索引的sql
+log_queries_not_using_indexes = 1
+
+# 针对log_queries_not_using_indexes开启后，记录慢sql的频次、每分钟记录的条数
+log_throttle_queries_not_using_indexes = 5
+
+# 作为从库时生效,从库复制中如何有慢sql也将被记录
+#log_slow_slave_statements = 1
+
+# 慢查询执行的秒数，必须达到此值可被记录
+#long_query_time = 8
+
+# 检索的行数必须达到此值才可被记为慢查询
+#min_examined_row_limit = 100
+
+# mysql binlog日志文件保存的过期时间，过期后自动删除
+#expire_logs_days = 5
+
+# Remove leading # to set options mainly useful for reporting servers.
+# The server defaults are faster for transactions and fast SELECTs.
+# Adjust sizes as needed, experiment to find the optimal values.
+# join_buffer_size = 128M
+# sort_buffer_size = 2M
+# read_rnd_buffer_size = 2M 
+
+sql_mode=NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+```
+
+5. 安装服务(服务名一般默认为MySQL)
+
+```
+# 进入目录, 如 E:\data\mysql-5.7.30-winx64\bin
+# 按住shift右键点空白的地方进行命令行模式
+mysqld -install
+```
+```
+# 提示服务安装成功
+# 如果报错Install/Remove of the Service Denied! 说明需要以管理员的身份进行安装
+# 如果提示找不到MSVCP120.dll,需要先安装vcredist运行库
+# 下载 vcredist 地址：https://www.microsoft.com/zh-CN/download/details.aspx?id=40784
+E:\data\mysql-5.7.30-winx64\bin>mysqld -install
+Service successfully installed.
+```
+
+6. 启动服务
+
+```
+# 需要先启动 否则无法完成初始化
+E:\data\mysql-5.7.30-winx64\bin>net start mysql
+MySQL 服务正在启动 .
+MySQL 服务已经启动成功。
+```
+
+7. 初始化MySQL
+
+```
+# MySQL5.7是不带data目录的，所以需要初始化MySQL，生产data目录
+# 使用mysqld --initialize 生成的密码在data目录下的：[pc名称].err文件中
+# 使用 mysqld --initialize-insecure 这个命令初始化root用户密码为空
+mysqld --initialize
+```
+```
+# 完成时没有提示
+E:\data\mysql-5.7.30-winx64\bin>mysqld --initialize
+```
+```
+# 如果data目录存在 会有以下提示
+E:\data\mysql-5.7.30-winx64\bin>mysqld --initialize
+2020-07-11T07:45:19.520057Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
+2020-07-11T07:45:19.526057Z 0 [ERROR] --initialize specified but the data directory has files in it. Aborting.
+2020-07-11T07:45:19.528057Z 0 [ERROR] Aborting
+```
+
+8. 启动服务
+
+```
+# 启动服务
+net start mysql
+```
+```
+E:\data\mysql-5.7.30-winx64\bin>net start mysql
+MySQL 服务正在启动 .
+MySQL 服务已经启动成功。
+```
+
+### 设置修改MySql密码
+
+```
+# 随机密码在 E:\data\mysql-5.7.30-winx64\data\[计算机名].err中
+mysql -u root -p
+```
+```
+# 成功
+E:\data\mysql-5.7.30-winx64\bin>mysql -u root -p
+Enter password: ************ // 输入密码
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 2
+Server version: 5.7.30
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql>
+```
+
+```
+# 在mysql>后输入以下命令修改密码
+ALTER USER 'root'@'localhost' IDENTIFIED BY '新密码';
+或
+set password for root@localhost = password('新密码');
+```
+```
+# 成功提示
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY '123456';
+Query OK, 0 rows affected (0.00 sec)
+```
+
+
+
+### 开启远程访问
+
+```
+# 执行
+use mysql; // 回车
+```
+
+```
+# 提示
+Database changed
+```
+
+```
+# 执行
+select host,user from user; // 回车
+```
+
+```
+# 提示
++-----------+---------------+
+| host      | user          |
++-----------+---------------+
+| localhost | mysql.session |
+| localhost | mysql.sys     |
+| localhost | root          |
++-----------+---------------+
+3 rows in set (0.00 sec)
+```
+
+```
+# 执行
+update user set host='%' where user='root';
+```
+
+```
+# 提示
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+```
+
+```
+# 最后执行
+flush privileges;
+```
+
+
+
+### 启动与停止服务
+
+```
+# 启动服务
+net start mysql
+```
+
+```
+E:\data\mysql-5.7.30-winx64\bin>net start mysql
+MySQL 服务正在启动 .
+MySQL 服务已经启动成功。
+```
+
+```
+# 停止服务 
+net stop mysql
+```
+
+```
+E:\data\mysql-5.7.30-winx64\bin>net stop mysql
+MySQL 服务正在停止.
+MySQL 服务已成功停止。
+```
+
+### 卸载
+
+1. 停止服务
+
+```
+net stop mysql
+```
+
+2. 删除服务
+
+```
+mysqld --remove
+```
+
+3. 删除注册表
+
+```
+# 目录删除
+HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\Eventlog\Application\MySQL
+```

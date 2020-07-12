@@ -1,4 +1,4 @@
-# Redis 6.0.x 在 linux 下的安装与配置
+# Redis 6.0.x(5.0.x) 的安装与配置
 
 ## vi/vim
 
@@ -36,7 +36,10 @@ yum install gcc
 make
 ```
 ```
-# 6.0.x版本可能会有以下报错, 5.0.x不会。原因是gcc版本问题, 6.0.x需要gcc 5.3以上
+以下是5.0.X与6.0.X安装上的区别, 6.0.x需要gcc 5.3以上, centos7默认是4.8.5
+```
+```
+# 6.0.x版本可能会有以下报错, 5.0.x不会。原因是gcc版本问题, 
 ...
 server.c:2872:11: error: ‘struct redisServer’ has no member named ‘repl_good_slaves_count’
      server.repl_good_slaves_count = 0;
@@ -272,6 +275,7 @@ vim /etc/sysctl.conf
 在最后添加 net.core.somaxconn= 1024 保存退出
 ```
 net.core.somaxconn = 1024
+vm.overcommit_memory = 1
 ```
 执行以下命令生效
 ```
