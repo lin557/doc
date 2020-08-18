@@ -19,28 +19,28 @@ mkdir /data/mysql
 # 进入 /data/mysql目录
 cd ./mysql
 # 下载文件
-wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.28-linux-glibc2.12-x86_64.tar.gz
+wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31-linux-glibc2.12-x86_64.tar.gz
 或
-wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.28-el7-x86_64.tar.gz
+wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31-el7-x86_64.tar.gz
 ```
 
 ### 解压到 /data/mysql
 
 1. 解压
 ```
-tar xzf mysql-5.7.28-linux-glibc2.12-x86_64.tar.gz
+tar xzf mysql-5.7.31-linux-glibc2.12-x86_64.tar.gz
 ```
 
-2. 文件夹改名为mysql-5.7.28
+2. 文件夹改名为mysql-5.7.31
 ```
-mv mysql-5.7.28-linux-glibc2.12-x86_64 mysql-5.7.28
+mv mysql-5.7.31-linux-glibc2.12-x86_64 mysql-5.7.31
 ```
 
 ### 配置
 
 1. 进入mysql目录
 ```
-cd /data/mysql/mysql-5.7.28
+cd /data/mysql/mysql-5.7.31
 ```
 2. 创建my.cnf文件
 ```
@@ -64,7 +64,7 @@ socket = /tmp/mysql.sock
 user = root
 
 # pid文件
-pid-file = /data/mysql/mysql-5.7.28/mysqld.pid
+pid-file = /data/mysql/mysql-5.7.31/mysqld.pid
 
 # 不区分大小写
 lower_case_table_names = 1
@@ -76,10 +76,10 @@ server-id = 1
 port = 3306
 
 # mysql安装根目录
-basedir = /data/mysql/mysql-5.7.28
+basedir = /data/mysql/mysql-5.7.31
 
 # mysql数据文件所在位置
-datadir = /data/mysql/mysql-5.7.28/data
+datadir = /data/mysql/mysql-5.7.31/data
 
 # 临时目录 比如load data infile会用到
 tmpdir  = /tmp
@@ -120,11 +120,11 @@ event_scheduler= ON
 #日志设置
 
 # 数据库错误日志文件
-log_error = /data/mysql/mysql-5.7.28/logs/error.log
+log_error = /data/mysql/mysql-5.7.31/logs/error.log
 
 # 慢查询sql日志设置
 slow_query_log = 1
-slow_query_log_file = /data/mysql/mysql-5.7.28/logs/slow.log
+slow_query_log_file = /data/mysql/mysql-5.7.31/logs/slow.log
 
 # 检查未使用到索引的sql
 log_queries_not_using_indexes = 1
@@ -182,8 +182,8 @@ vim mysql.server
 basedir=
 datadir=
 # 修改为
-basedir=/data/mysql/mysql-5.7.28
-datadir=/data/mysql/mysql-5.7.28/data
+basedir=/data/mysql/mysql-5.7.31
+datadir=/data/mysql/mysql-5.7.31/data
 ```
 按ESC, 输入:wq保存退出
 
@@ -194,7 +194,7 @@ vim /etc/profile
 ```
 输入以下内容，注意添加在export之前，且把MYSQL_HOME变量也加在export 后面
 ```
-MYSQL_HOME=/data/mysql/mysql-5.7.28
+MYSQL_HOME=/data/mysql/mysql-5.7.31
 
 PATH=$PATH:$MYSQL_HOME/bin
 ```
@@ -216,17 +216,17 @@ source /etc/profile
 
 ```
 # 回到安装目录
-cd /data/mysql/mysql-5.7.28
+cd /data/mysql/mysql-5.7.31
 ```
 ```
-./bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.28 --datadir=/data/mysql/mysql-5.7.28/data --initialize
+./bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.31 --datadir=/data/mysql/mysql-5.7.31/data --initialize
 ```
 初始化时，如果出现以下错误
 ```
-[root@vm mysql-5.7.28]# ./bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.28 --datadir=/data/mysql/mysql-5.7.28/data --initialize
+[root@vm mysql-5.7.31]# ./bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.31 --datadir=/data/mysql/mysql-5.7.31/data --initialize
 ./bin/mysqld: error while loading shared libraries: libaio.so.1: cannot open shared object file: No such file or directory
-[root@iZk1a23odcrt4vsq3y1k5iZ mysql-5.7.28]# /data/mysql/mysql-5.7.28/bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.28 --datadir=/data/mysql/mysql-5.7.28/data --initialize
-/data/mysql/mysql-5.7.28/bin/mysqld: error while loading shared libraries: libaio.so.1: cannot open shared object file: No such file or directory
+[root@iZk1a23odcrt4vsq3y1k5iZ mysql-5.7.31]# /data/mysql/mysql-5.7.31/bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.31 --datadir=/data/mysql/mysql-5.7.31/data --initialize
+/data/mysql/mysql-5.7.31/bin/mysqld: error while loading shared libraries: libaio.so.1: cannot open shared object file: No such file or directory
 ```
 执行以下命令安装 libaio就可以
 ```
@@ -237,7 +237,7 @@ yum -y install numactl
 
 执行成功
 ```
-[root@iZk1a23odcrt4vsq3y1k5iZ mysql-5.7.28]# ./bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.28 --datadir=/data/mysql/mysql-5.7.28/data --initialize 
+[root@iZk1a23odcrt4vsq3y1k5iZ mysql-5.7.31]# ./bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.31 --datadir=/data/mysql/mysql-5.7.31/data --initialize 
 2019-12-25T07:32:46.578857Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
 2019-12-25T07:32:47.435848Z 0 [Warning] InnoDB: New log files created, LSN=45790
 2019-12-25T07:32:47.547091Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.
@@ -256,12 +256,12 @@ cd /var/log
 mkdir /var/log/mariadb
 
 # 创建 logs 目录 并创建 slow.log文件
-cd /data/mysql/mysql-5.7.28/
-mkdir /data/mysql/mysql-5.7.28/logs
+cd /data/mysql/mysql-5.7.31/
+mkdir /data/mysql/mysql-5.7.31/logs
 ```
 ```
 # 失败提示
-[root@tg-apps2 mysql-5.7.28]# ./support-files/mysql.server start
+[root@tg-apps2 mysql-5.7.31]# ./support-files/mysql.server start
 Starting MySQL.Logging to '/var/log/mariadb/mariadb.log'.
 The server quit without updating PID file (/data/mysql/mysq[FAILED]/mysqld.pid).
 ```
@@ -272,7 +272,7 @@ The server quit without updating PID file (/data/mysql/mysq[FAILED]/mysqld.pid).
 ```
 ```
 # 成功提示
-[root@tg-apps2 mysql-5.7.28]# ./support-files/mysql.server start
+[root@tg-apps2 mysql-5.7.31]# ./support-files/mysql.server start
 Starting MySQL. 
 ```
 
@@ -285,7 +285,7 @@ mysql -u root -p
 ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)
 
 # 如果没配置环境变量会出现以下提示
-[root@tg-apps2 mysql-5.7.28]# mysql -u root -p
+[root@tg-apps2 mysql-5.7.31]# mysql -u root -p
 -bash: mysql: command not found
 ```
 输入初始密码(xshell中可以复制粘贴)后，通过以下命令修改密码
@@ -365,7 +365,7 @@ flush privileges;
 
 ## 启动与停止
 
-./support-files/ 目录在mysql的安装目录下 本文在 /data/mysql/mysql-5.7.28/ 下
+./support-files/ 目录在mysql的安装目录下 本文在 /data/mysql/mysql-5.7.31/ 下
 
 ### 启动
 
@@ -576,6 +576,17 @@ SELECT CONCAT('CAR', '123')
 
 
 
+### 验证语句是否使用了索引
+
+```
+# 使用 explain 命令
+explain SELECT * from terminal_position where data_time > '2020-07-30'
+```
+
+
+
+
+
 ## 分区表
 
 - 一个表最多支持1024个分区
@@ -602,7 +613,7 @@ CREATE TABLE `表名` (
 ```
 2. 按月份分区
 ```sql
-// 按月份分区
+# 按月份分区
 CREATE TABLE `表名` (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `data_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -611,6 +622,34 @@ CREATE TABLE `表名` (
     PARTITION `p_201812` VALUES	LESS THAN (TO_DAYS('2019-01-01')),
     PARTITION `p_201901` VALUES LESS THAN (TO_DAYS('2019-02-01')),
     PARTITION `p_201902` VALUES LESS THAN (TO_DAYS('2019-03-01'))
+);
+```
+
+```
+# 例如
+CREATE TABLE `terminal_position` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `imei`  varchar(32) NOT NULL ,
+    `city_id`  varchar(16) NOT NULL DEFAULT '' ,
+    `route_code`  varchar(16) NOT NULL DEFAULT '' ,
+    `station_no`  int(11) NULL DEFAULT 0 ,
+    `direction`  int(11) NULL DEFAULT 0 ,
+    `latitude`  decimal(11,6) NULL DEFAULT 0.000000 ,
+    `longitude`  decimal(11,6) NULL DEFAULT 0.000000 ,
+    `state`  int(11) NULL DEFAULT 0 ,
+    `warning`  int(11) NULL DEFAULT 0 ,
+    `speed`  int(11) NULL DEFAULT 0 ,
+    `azimuth`  int(11) NULL DEFAULT 0 ,
+    `height`  int(11) NULL DEFAULT 0 ,
+    `mileage`  decimal(11,3) NULL DEFAULT 0.000 ,
+    `data_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_time`  datetime NULL DEFAULT CURRENT_TIMESTAMP,
+    `update_time`  datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ,
+    PRIMARY KEY (`id`, `data_time`)
+) ENGINE = INNODB PARTITION BY RANGE (TO_DAYS(data_time))(
+    PARTITION `p_202006` VALUES LESS THAN (TO_DAYS('2020-07-01')),
+    PARTITION `p_202007` VALUES LESS THAN (TO_DAYS('2020-08-01')),
+    PARTITION `p_202008` VALUES LESS THAN (TO_DAYS('2020-09-01'))
 );
 ```
 
@@ -820,27 +859,27 @@ default-time_zone = '+00:00'
 
 ```
 # 直接下载
-https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.30-winx64.zip
+https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31-winx64.zip
 ```
 
 2. 解压
 
 ```
 # 如解压到E盘下的指定目录
-E:\data\mysql-5.7.28-winx64
+E:\data\mysql-5.7.31-winx64
 ```
 
 3. 配置环境变量
 
 ```
 # 将bin添加到系统变量 path最后面, 注意与其他变量使用;分开
-;E:\data\mysql-5.7.30-winx64\bin
+;E:\data\mysql-5.7.31-winx64\bin
 ```
 
 4. 创建配置文件 my.ini
 
 ```
-# 在E:\data\mysql-5.7.28-winx64目录下创建 my.ini
+# 在E:\data\mysql-5.7.31-winx64目录下创建 my.ini
 ```
 ```
 # 注意 my.ini 必须存为 ANSI编码格式, 其他格式可能无法启动服务
@@ -862,10 +901,10 @@ lower_case_table_names = 1
 port = 3306
 
 # mysql安装根目录
-basedir = E:\data\mysql-5.7.30-winx64
+basedir = E:\data\mysql-5.7.31-winx64
 
 # mysql数据文件所在位置
-datadir = E:\data\mysql-5.7.30-winx64\data
+datadir = E:\data\mysql-5.7.31-winx64\data
 
 # 设置mysql客户端默认字符集
 character-set-server=utf8
@@ -901,11 +940,11 @@ event_scheduler= ON
 #日志设置
 
 # 数据库错误日志文件
-log_error = E:\data\mysql-5.7.30-winx64\logs\error.log
+log_error = E:\data\mysql-5.7.31-winx64\logs\error.log
 
 # 慢查询sql日志设置
 slow_query_log = 1
-slow_query_log_file = E:\data\mysql-5.7.30-winx64\logs\slow.log
+slow_query_log_file = E:\data\mysql-5.7.31-winx64\logs\slow.log
 
 # 检查未使用到索引的sql
 log_queries_not_using_indexes = 1
@@ -938,7 +977,7 @@ sql_mode=NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
 5. 安装服务(服务名一般默认为MySQL)
 
 ```
-# 进入目录, 如 E:\data\mysql-5.7.30-winx64\bin
+# 进入目录, 如 E:\data\mysql-5.7.31-winx64\bin
 # 按住shift右键点空白的地方进行命令行模式
 mysqld -install
 ```
@@ -947,7 +986,7 @@ mysqld -install
 # 如果报错Install/Remove of the Service Denied! 说明需要以管理员的身份进行安装
 # 如果提示找不到MSVCP120.dll,需要先安装vcredist运行库
 # 下载 vcredist 地址：https://www.microsoft.com/zh-CN/download/details.aspx?id=40784
-E:\data\mysql-5.7.30-winx64\bin>mysqld -install
+E:\data\mysql-5.7.31-winx64\bin>mysqld -install
 Service successfully installed.
 ```
 
@@ -955,7 +994,7 @@ Service successfully installed.
 
 ```
 # 需要先启动 否则无法完成初始化
-E:\data\mysql-5.7.30-winx64\bin>net start mysql
+E:\data\mysql-5.7.31-winx64\bin>net start mysql
 MySQL 服务正在启动 .
 MySQL 服务已经启动成功。
 ```
@@ -970,11 +1009,11 @@ mysqld --initialize
 ```
 ```
 # 完成时没有提示
-E:\data\mysql-5.7.30-winx64\bin>mysqld --initialize
+E:\data\mysql-5.7.31-winx64\bin>mysqld --initialize
 ```
 ```
 # 如果data目录存在 会有以下提示
-E:\data\mysql-5.7.30-winx64\bin>mysqld --initialize
+E:\data\mysql-5.7.31-winx64\bin>mysqld --initialize
 2020-07-11T07:45:19.520057Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
 2020-07-11T07:45:19.526057Z 0 [ERROR] --initialize specified but the data directory has files in it. Aborting.
 2020-07-11T07:45:19.528057Z 0 [ERROR] Aborting
@@ -987,7 +1026,7 @@ E:\data\mysql-5.7.30-winx64\bin>mysqld --initialize
 net start mysql
 ```
 ```
-E:\data\mysql-5.7.30-winx64\bin>net start mysql
+E:\data\mysql-5.7.31-winx64\bin>net start mysql
 MySQL 服务正在启动 .
 MySQL 服务已经启动成功。
 ```
@@ -995,16 +1034,16 @@ MySQL 服务已经启动成功。
 ### 设置修改MySql密码
 
 ```
-# 随机密码在 E:\data\mysql-5.7.30-winx64\data\[计算机名].err中
+# 随机密码在 E:\data\mysql-5.7.31-winx64\data\[计算机名].err中
 mysql -u root -p
 ```
 ```
 # 成功
-E:\data\mysql-5.7.30-winx64\bin>mysql -u root -p
+E:\data\mysql-5.7.31-winx64\bin>mysql -u root -p
 Enter password: ************ // 输入密码
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 2
-Server version: 5.7.30
+Server version: 5.7.31
 
 Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
 
@@ -1086,7 +1125,7 @@ net start mysql
 ```
 
 ```
-E:\data\mysql-5.7.30-winx64\bin>net start mysql
+E:\data\mysql-5.7.31-winx64\bin>net start mysql
 MySQL 服务正在启动 .
 MySQL 服务已经启动成功。
 ```
@@ -1097,7 +1136,7 @@ net stop mysql
 ```
 
 ```
-E:\data\mysql-5.7.30-winx64\bin>net stop mysql
+E:\data\mysql-5.7.31-winx64\bin>net stop mysql
 MySQL 服务正在停止.
 MySQL 服务已成功停止。
 ```

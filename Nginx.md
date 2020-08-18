@@ -110,7 +110,13 @@ C:\server\nginx-1.14.2\nginx -v
 // linux
 /usr/sbin/nginx -v
 ```
-6. 注册成服务
+6. 检测配置文件是否正确
+```
+// linux
+/usr/sbin/nginx -t
+```
+
+7. 注册成服务
 ```
 // window
 可以使用Windows Service Wrapper包装成服务
@@ -329,7 +335,8 @@ location /pss/ {
         server_name  localhost;
 
         location / {
-            # 这种配置情况下  192.168.0.250:8090 这台服务器上收到的url是 http://traffic/motor/xxxxx 不是真实的地址
+            # 这种配置情况下  192.168.0.250:8090 这台服务器上收到的url是              
+            # http://traffic/motor/xxxxx 不是真实的地址
             proxy_pass http://traffic/;
             
             # 需要加上以下配置转发真实ip与地址
@@ -422,7 +429,7 @@ http {
     gzip_min_length 4k;
 
     # gzip 压缩级别，1-9，数字越大压缩的越好，也越占用CPU时间
-    gzip_comp_level 6;
+    gzip_comp_level 5;
 
     # 进行压缩的文件类型。
     gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/xml text/javascript application/json;
@@ -491,4 +498,52 @@ X-Content-Encoding-Over-Network: gzip
 ```
 
 
+
+### 跨域设置
+
+```
+http {
+    # 略
+
+    server {
+        listen       80;
+        server_name  localhost;
+        # 启用跨域
+        add_header Access-Control-Allow-Origin *;
+        # 允许跨域的方法
+        add_header Access-Control-Allow-Methods 'GET,POST';
+        # 允许跨域的头标识
+        add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization';
+    
+        location / {
+            root   html;
+            index  index.html index.htm;
+        }
+    }
+}
+```
+
+```
+# 设置成功后, 在浏览器中可以看到每次请求的返回头中都带有以下几个字段
+access-control-allow-origin: *
+access-control-allow-headers
+access-control-allow-methods
+
+# 响应头表示是否可以将对请求的响应暴露给页面 这个不是必须
+# Access-Control-Allow-Credentials 工作中与XMLHttpRequest.withCredentials 或Fetch API中的Request() 构造器中的credentials 选项结合使用。
+Access-Control-Allow-Credentials: true
+```
+
+关于报错
+
+```
+# 提示是说明不支持跨域
+Access to XMLHttpRequest at 'https://www.baidu.com/' (redirected from 'http://www.baidu.com/') from origin 'null' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+```
+
+```
+# 表示可能服务端设置了跨域，nginx也设置了跨域引起
+# 解决办法: 去掉其中一个的跨域配置
+The 'Access-Control-Allow-Origin' header contains multiple values'*, *', but only one is allowed.
+```
 
