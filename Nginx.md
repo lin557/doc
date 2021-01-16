@@ -116,16 +116,19 @@ C:\server\nginx-1.14.2\nginx -v
 /usr/sbin/nginx -t
 ```
 
-7. 注册成服务
+## 注册成服务
+
+### Windows
+
 ```
 // window
 可以使用Windows Service Wrapper包装成服务
 ```
 
-
-linux 配置服务
+### linux 配置服务
 
 ```
+# 编辑文件
 vim /usr/lib/systemd/system/nginx.service
 ```
 输入以下内容
@@ -155,6 +158,80 @@ systemctl enable nginx.service
 ```
 // 通过服务方式启动nginx
 systemctl start nginx.service
+```
+
+```
+// 停止
+systemctl stop nginx.service
+```
+
+
+
+## 启动后访问403的问题
+
+
+
+### 查看日志
+
+~~~
+# 里面有关于问题的说明
+cat /var/log/nginx/error.log
+~~~
+
+### 权限问题
+
+1. 配置nginx.conf
+
+~~~
+# 打开 nginx.conf
+vim /etc/nginx/nginx.conf
+
+# 修改user为当前用户
+user root;
+~~~
+
+2. 没有index.htm 或 index.html文件，可以手动配置一个，操作略
+
+3. 文件夹没有权限
+
+```
+chmod -r 777 /data
+```
+
+ ### SELinux引起
+
+1. 查看selinux状态
+```
+/usr/sbin/sestatus
+
+# 提示
+[root@web3 /]# /usr/sbin/sestatus
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Max kernel policy version:      28
+```
+
+2. 临时解决(不用重启)
+```
+setenforce 0
+```
+
+3. 永久解决
+```
+# 打开配置
+vim /etc/selinux/config
+
+# 将SELINUX=enforcing改为SELINUX=disabled
+
+# 输入:wq 保存退出
+
+# 重启 reboot
 ```
 
 
@@ -497,6 +574,95 @@ X-Content-Encoding-Over-Network: gzip
     }
 ```
 
+关于SSL配置后报错的问题(PEM_read_bio:no start line:Expecting: ANY PRIVATE KEY)
+
+```
+# 客户发过来的是.txt后缀的文件, 配置上nginx后报错
+[root@distartech_02 ~]# /usr/sbin/nginx -t
+nginx: [emerg] cannot load certificate key "/etc/nginx/ssl/dsmarttrip.com.key": PEM_read_bio_PrivateKey() failed (SSL: error:0906D06C:PEM routines:PEM_read_bio:no start line:Expecting: ANY PRIVATE KEY)
+nginx: configuration file /etc/nginx/nginx.conf test failed
+```
+
+1. 尝试在文件头与尾部增加 RSA， 但还是失败
+
+```
+-----BEGIN PRIVATE KEY-----
+改为
+-----BEGIN RSA PRIVATE KEY-----
+
+-----END PRIVATE KEY-----
+改为
+-----END RSA PRIVATE KEY-----
+```
+
+2. 使用openssl检测
+
+```
+openssl rsa -in dsmarttrip.com.key -modulus -noout
+```
+
+```
+# 结果提示错误
+[root@distartech_02 ssl]# openssl rsa -in dsmarttrip.com.key -modulus -noout
+unable to load Private Key
+139880452286352:error:0906D06C:PEM routines:PEM_read_bio:no start line:pem_lib.c:707:Expecting: ANY PRIVATE KEY
+```
+
+3. 检查文件是否包含非法字符
+
+```
+file dsmarttrip.com.key
+```
+
+```
+# 结果显示是 text 类型不是密钥文本
+[root@distartech_02 ssl]# file dsmarttrip.com.key
+dsmarttrip.com.key: UTF-8 Unicode (with BOM) text
+```
+
+4. 删除非法字符
+
+```
+tail -c +4 dsmarttrip.com.key > new_server.key
+```
+
+```
+# 检测文件, 提示PEM RSA private key 说明转换成功
+[root@distartech_02 ssl]# tail -c +4 dsmarttrip.com.key > new_key.key
+[root@distartech_02 ssl]# file dsmarttrip.com.key
+dsmarttrip.com.key: PEM RSA private key
+```
+
+5. 检测key文件
+
+```
+# 没有错误提示, 配置进nginx, 问题解决
+[root@distartech_02 ssl]# openssl rsa -in dsmarttrip.com.key -modulus -noout
+Modulus=A78BF7B7979620DE6F03A33DA384C2922DC73709D9C0AC28543FCABDE40F04D...
+```
+
+
+
+### 强制跳转https
+
+```
+
+server {
+	listen       443;	#ssl端口
+	listen       80;	#用户习惯用http访问，加上80，后面通过497状态码让它自动跳到443端口
+	server_name  test.com;
+	#为一个server{......}开启ssl支持
+	ssl                  on;
+	#指定PEM格式的证书文件 
+	ssl_certificate      /etc/nginx/test.pem; 
+	#指定PEM格式的私钥文件
+	ssl_certificate_key  /etc/nginx/test.key;
+	
+	#让http请求重定向到https请求	
+	error_page 497	https://$host$uri?$args;
+}
+```
+
 
 
 ### 跨域设置
@@ -537,7 +703,7 @@ Access-Control-Allow-Credentials: true
 关于报错
 
 ```
-# 提示是说明不支持跨域
+# 提示不支持跨域
 Access to XMLHttpRequest at 'https://www.baidu.com/' (redirected from 'http://www.baidu.com/') from origin 'null' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
 ```
 

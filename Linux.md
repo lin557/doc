@@ -116,6 +116,16 @@ mv /home/data/mysql /home
 
 
 
+## 日志查看
+
+
+
+
+
+
+
+
+
 ## 磁盘操作
 
 ### 磁盘空间
@@ -156,6 +166,27 @@ date -R
 ```
 [root@tg-apps2 ~]# date -R
 Mon, 18 May 2020 10:43:47 +0800
+```
+
+### 时间同步
+
+```
+# 安装同步软件
+yum install ntpdate -y
+```
+
+```
+# 执行同步
+ntpdate -u ntp.api.bz
+
+# 成功提示
+[root@dvr1 ~]# ntpdate -u ntp.api.bz
+14 Jan 17:03:02 ntpdate[4990]: step time server 17.253.82.125 offset -25010.471297 sec
+```
+
+```
+# 将时间同步到硬件 防止重启后原时间丢失
+hwclock -w
 ```
 
 
@@ -224,6 +255,48 @@ ip addr
 ifconfig
 ```
 
+
+
+## CentOS安装Windows字体
+
+1. 进入 /usr/share/fonts 下，创建一个 winfonts目录
+
+```
+mkdir -p /usr/share/fonts/winfonts
+```
+
+2. 将 windows上的所有字体都上传到这个winfonts下，或只选出需要的字体
+
+```
+C:\Windows\Fonts
+```
+
+3. 安装字体管理软件
+
+```
+yum install -y fontconfig mkfontscale
+```
+
+4. 进入linux上的字体目录下
+
+```
+cd /usr/share/fonts/winfonts
+```
+
+5. 安装刚上传的字体
+
+```
+mkfontscale
+# 有时可能需要更新字体缓存 但我没用过
+fc-cache
+```
+
+6. 查看是否安装成功
+
+```
+# zh 表中文
+fc-list :lang=zh
+```
 
 
 ## 磁盘操作

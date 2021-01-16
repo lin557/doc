@@ -19,28 +19,28 @@ mkdir /data/mysql
 # 进入 /data/mysql目录
 cd ./mysql
 # 下载文件
-wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31-linux-glibc2.12-x86_64.tar.gz
+wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.32-linux-glibc2.12-x86_64.tar.gz
 或
-wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31-el7-x86_64.tar.gz
+wget https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.32-el7-x86_64.tar.gz
 ```
 
 ### 解压到 /data/mysql
 
 1. 解压
 ```
-tar xzf mysql-5.7.31-linux-glibc2.12-x86_64.tar.gz
+tar xzf mysql-5.7.32-linux-glibc2.12-x86_64.tar.gz
 ```
 
-2. 文件夹改名为mysql-5.7.31
+2. 文件夹改名为mysql-5.7.32
 ```
-mv mysql-5.7.31-linux-glibc2.12-x86_64 mysql-5.7.31
+mv mysql-5.7.32-linux-glibc2.12-x86_64 mysql-5.7.32
 ```
 
 ### 配置
 
 1. 进入mysql目录
 ```
-cd /data/mysql/mysql-5.7.31
+cd /data/mysql/mysql-5.7.32
 ```
 2. 创建my.cnf文件
 ```
@@ -56,7 +56,7 @@ vim my.cnf
 
 [client]
 port = 3306
-socket = /tmp/mysql.sock
+#socket = /tmp/mysql.sock
 
 [mysqld]
 
@@ -64,7 +64,7 @@ socket = /tmp/mysql.sock
 user = root
 
 # pid文件
-pid-file = /data/mysql/mysql-5.7.31/mysqld.pid
+pid-file = /data/mysql/mysql-5.7.32/mysqld.pid
 
 # 不区分大小写
 lower_case_table_names = 1
@@ -76,16 +76,16 @@ server-id = 1
 port = 3306
 
 # mysql安装根目录
-basedir = /data/mysql/mysql-5.7.31
+basedir = /data/mysql/mysql-5.7.32
 
 # mysql数据文件所在位置
-datadir = /data/mysql/mysql-5.7.31/data
+datadir = /data/mysql/mysql-5.7.32/data
 
 # 临时目录 比如load data infile会用到
 tmpdir  = /tmp
 
 # 设置socke文件所在目录
-socket  = /tmp/mysql.sock
+#socket  = /tmp/mysql.sock
 
 character-set-server=utf8
  
@@ -98,7 +98,7 @@ default-time_zone = '+00:00'
 skip_name_resolve = 1
 
 # SQL数据包发送的大小，如果有BLOB对象建议修改成1G
-max_allowed_packet = 10M
+max_allowed_packet = 20M
 
 # MySQL连接闲置超过一定时间后(单位：秒)将会被强行关闭
 # MySQL默认的wait_timeout  值为8个小时, interactive_timeout参数需要同时配置才能生效
@@ -120,11 +120,11 @@ event_scheduler= ON
 #日志设置
 
 # 数据库错误日志文件
-log_error = /data/mysql/mysql-5.7.31/logs/error.log
+log_error = /data/mysql/mysql-5.7.32/logs/error.log
 
 # 慢查询sql日志设置
 slow_query_log = 1
-slow_query_log_file = /data/mysql/mysql-5.7.31/logs/slow.log
+slow_query_log_file = /data/mysql/mysql-5.7.32/logs/slow.log
 
 # 检查未使用到索引的sql
 log_queries_not_using_indexes = 1
@@ -143,6 +143,9 @@ log_throttle_queries_not_using_indexes = 5
 
 # mysql binlog日志文件保存的过期时间，过期后自动删除
 #expire_logs_days = 5
+
+# 密码过期处理
+# skip-grant-tables
 
 # Remove leading # and set to the amount of RAM for the most important data
 # cache in MySQL. Start at 70% of total RAM for dedicated server, else 10%.
@@ -182,8 +185,8 @@ vim mysql.server
 basedir=
 datadir=
 # 修改为
-basedir=/data/mysql/mysql-5.7.31
-datadir=/data/mysql/mysql-5.7.31/data
+basedir=/data/mysql/mysql-5.7.32
+datadir=/data/mysql/mysql-5.7.32/data
 ```
 按ESC, 输入:wq保存退出
 
@@ -194,7 +197,7 @@ vim /etc/profile
 ```
 输入以下内容，注意添加在export之前，且把MYSQL_HOME变量也加在export 后面
 ```
-MYSQL_HOME=/data/mysql/mysql-5.7.31
+MYSQL_HOME=/data/mysql/mysql-5.7.32
 
 PATH=$PATH:$MYSQL_HOME/bin
 ```
@@ -216,17 +219,17 @@ source /etc/profile
 
 ```
 # 回到安装目录
-cd /data/mysql/mysql-5.7.31
+cd /data/mysql/mysql-5.7.32
 ```
 ```
-./bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.31 --datadir=/data/mysql/mysql-5.7.31/data --initialize
+./bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.32 --datadir=/data/mysql/mysql-5.7.32/data --initialize
 ```
 初始化时，如果出现以下错误
 ```
-[root@vm mysql-5.7.31]# ./bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.31 --datadir=/data/mysql/mysql-5.7.31/data --initialize
+[root@vm mysql-5.7.32]# ./bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.32 --datadir=/data/mysql/mysql-5.7.32/data --initialize
 ./bin/mysqld: error while loading shared libraries: libaio.so.1: cannot open shared object file: No such file or directory
-[root@iZk1a23odcrt4vsq3y1k5iZ mysql-5.7.31]# /data/mysql/mysql-5.7.31/bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.31 --datadir=/data/mysql/mysql-5.7.31/data --initialize
-/data/mysql/mysql-5.7.31/bin/mysqld: error while loading shared libraries: libaio.so.1: cannot open shared object file: No such file or directory
+[root@iZk1a23odcrt4vsq3y1k5iZ mysql-5.7.32]# /data/mysql/mysql-5.7.32/bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.32 --datadir=/data/mysql/mysql-5.7.32/data --initialize
+/data/mysql/mysql-5.7.32/bin/mysqld: error while loading shared libraries: libaio.so.1: cannot open shared object file: No such file or directory
 ```
 执行以下命令安装 libaio就可以
 ```
@@ -237,7 +240,7 @@ yum -y install numactl
 
 执行成功
 ```
-[root@iZk1a23odcrt4vsq3y1k5iZ mysql-5.7.31]# ./bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.31 --datadir=/data/mysql/mysql-5.7.31/data --initialize 
+[root@iZk1a23odcrt4vsq3y1k5iZ mysql-5.7.32]# ./bin/mysqld --user=root --basedir=/data/mysql/mysql-5.7.32 --datadir=/data/mysql/mysql-5.7.32/data --initialize 
 2019-12-25T07:32:46.578857Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
 2019-12-25T07:32:47.435848Z 0 [Warning] InnoDB: New log files created, LSN=45790
 2019-12-25T07:32:47.547091Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.
@@ -256,12 +259,12 @@ cd /var/log
 mkdir /var/log/mariadb
 
 # 创建 logs 目录 并创建 slow.log文件
-cd /data/mysql/mysql-5.7.31/
-mkdir /data/mysql/mysql-5.7.31/logs
+cd /data/mysql/mysql-5.7.32/
+mkdir /data/mysql/mysql-5.7.32/logs
 ```
 ```
 # 失败提示
-[root@tg-apps2 mysql-5.7.31]# ./support-files/mysql.server start
+[root@tg-apps2 mysql-5.7.32]# ./support-files/mysql.server start
 Starting MySQL.Logging to '/var/log/mariadb/mariadb.log'.
 The server quit without updating PID file (/data/mysql/mysq[FAILED]/mysqld.pid).
 ```
@@ -272,8 +275,16 @@ The server quit without updating PID file (/data/mysql/mysq[FAILED]/mysqld.pid).
 ```
 ```
 # 成功提示
-[root@tg-apps2 mysql-5.7.31]# ./support-files/mysql.server start
+[root@tg-apps2 mysql-5.7.32]# ./support-files/mysql.server start
 Starting MySQL. 
+
+# 如果提示 /var/lib/mysql 不存在
+[root@sql3 mysql-5.7.32]# ./support-files/mysql.server start
+Starting MySQL.2020-12-31T06:35:20.257894Z mysqld_safe Directory '/var/lib/mysql' for UNIX socket file don't exists.
+ ERROR! The server quit without updating PID file (/data/mysql/mysql-5.7.32/mysqld.pid).
+
+# 创建一个就可以
+mkdir /var/lib/mysql
 ```
 
 8. 以初始密码登陆, 并修改密码
@@ -284,11 +295,106 @@ mysql -u root -p
 # 如果服务没启动会出现以下提示
 ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)
 
+# 5.7.32版本出现以下提示时, 修改mysql.sock位置为默认就可以
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/lib/mysql/mysql.sock' (2)
+
+# 找一下文件在哪 一般在/var/lib/mysql/mysql.sock但改了my.cnf到这里还是不成功
+find / -name mysql.sock
+
+# 设置软链到默认地址
+ln -s /var/lib/mysql/mysql.sock /tmp/mysql.sock
+
+# 查看是否成功
+ls /tmp/
+
+
 # 如果没配置环境变量会出现以下提示
-[root@tg-apps2 mysql-5.7.31]# mysql -u root -p
+[root@tg-apps2 mysql-5.7.32]# mysql -u root -p
 -bash: mysql: command not found
 ```
+关于密码过期的处理
+
+```
+# 密码过期提示
+ERROR 1862 (HY000): Your password has expired. To log in you must change it using a client that supports expired passwords.
+```
+
+```
+# 用忽略授权表的方法进入mysql
+vim /etc/my.cnf
+
+# 在 [mysqld] 下增加一行 :wq! #保存退出
+skip-grant-tables
+
+# 重启mysql服务 用mysql -u root 进入
+
+# 换库
+use mysql;
+# 查询一下过期字段 password_expired
+MySQL [mysql]> select * from mysql.user where user='root' \G;
+*************************** 1. row ***************************
+                  Host: %
+                  User: root
+           Select_priv: Y
+           Insert_priv: Y
+           Update_priv: Y
+           Delete_priv: Y
+           Create_priv: Y
+             Drop_priv: Y
+           Reload_priv: Y
+         Shutdown_priv: Y
+          Process_priv: Y
+             File_priv: Y
+            Grant_priv: Y
+       References_priv: Y
+            Index_priv: Y
+            Alter_priv: Y
+          Show_db_priv: Y
+            Super_priv: Y
+ Create_tmp_table_priv: Y
+      Lock_tables_priv: Y
+          Execute_priv: Y
+       Repl_slave_priv: Y
+      Repl_client_priv: Y
+      Create_view_priv: Y
+        Show_view_priv: Y
+   Create_routine_priv: Y
+    Alter_routine_priv: Y
+      Create_user_priv: Y
+            Event_priv: Y
+          Trigger_priv: Y
+Create_tablespace_priv: Y
+              ssl_type: 
+            ssl_cipher: 
+           x509_issuer: 
+          x509_subject: 
+         max_questions: 0
+           max_updates: 0
+       max_connections: 0
+  max_user_connections: 0
+                plugin: mysql_native_password
+ authentication_string: *453AB2FE2A97668F1B146C711C8D8F8FF9E41076
+      password_expired: Y
+ password_last_changed: 2020-10-29 10:01:04
+     password_lifetime: NULL
+        account_locked: N
+1 row in set (0.00 sec)
+
+ERROR: No query specified
+
+# 把password_expired 改成不过期
+update user set password_expired='N' where user='root';
+
+# 生效
+flush privileges;
+quit
+
+# 把my.cnf 的 skip-grant-tables 这行注释掉
+# 重启服务
+```
+
 输入初始密码(xshell中可以复制粘贴)后，通过以下命令修改密码
+
 ```
 # new password 为新密码
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'new password';
@@ -365,7 +471,7 @@ flush privileges;
 
 ## 启动与停止
 
-./support-files/ 目录在mysql的安装目录下 本文在 /data/mysql/mysql-5.7.31/ 下
+./support-files/ 目录在mysql的安装目录下 本文在 /data/mysql/mysql-5.7.32/ 下
 
 ### 启动
 
@@ -851,6 +957,294 @@ default-time_zone = '+00:00'
 
 
 
+## 配置复制
+
+
+
+### 创建复制账号
+
+```
+# 建议在每一台服务器上都创建账号 但这不是必须的，实际只有主库需要这个账号
+# 指定局域网，让它只能运行在局域网中
+# p4ssword 表密码
+# repl 表账号
+mysql> GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.*
+    -> TO repl@'10.1.254.%' IDENTIFIED By 'p4ssword';
+```
+
+
+
+### 配置主库和备库
+
+1. 配置主库
+
+```
+# my.cnf中增加
+
+# 指定唯一的服务器id, 通常做法是ip的后8位
+server_id = 164186
+
+# 打开二进制日志 日志名叫mysql-bin 但也可以叫其他名字
+# 建议指定log_bin文件名以保证二进制日志名在所有服务器上是一致的
+log_bin = /data/mysql/mysql-bin
+
+# 主库上重要的选项 增加安全性(备库不需要)
+sync_binlog = 1
+
+# InnoDB引擎 建议增加以下配置 以下是5.0+版本默认配置
+#innodb_flush_logs_at_trx_commit
+#innodb_support_xa = 1
+#innodb_safe_binlog
+```
+
+```
+# 配置好后重启 输入以下命令查看状态
+SHOW MASTER STATUS;
+```
+
+```
+# 显示结果如下
+MySQL [(none)]> SHOW MASTER STATUS;
++------------------+----------+--------------+------------------+-------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |
++------------------+----------+--------------+------------------+-------------------+
+| mysql-bin.000001 |      458 |              |                  |                   |
++------------------+----------+--------------+------------------+-------------------+
+1 row in set (0.00 sec)
+```
+
+
+2. 配置备库
+
+```
+# 备库使用跟主库相同的配置并增加一些选项
+
+# 指定唯一的服务器id, 通常做法是ip的后8位
+server_id = 164185
+
+# 打开二进制日志
+log_bin = /data/mysql/mysql-bin
+
+# 指定中继日志的位置与命名
+relay_log = /data/mysql/mysql-relay-bin
+
+# 最好开启 不然可能会出现一些奇怪的问题
+log_slave_updates = 1
+
+# 阻止备库在崩溃后自动启动复制 也意味着重启备库后需要手动启动复制
+skip_slave_start
+
+# 不介意的fync()导致的开销, 最好设置以下, 保护备库
+sync_master_info = 1
+sync_relay_log = 1
+sync_relay_log_info = 1
+
+# 只读 如果可能建议开启 但不是很实用 有时备库需要建表等操作 聂工要在从库写数据 这里禁用
+#read_only = 1
+```
+
+
+
+### 启动复制
+
+1. 告诉备库连接到主库并重发二进制日志
+
+```
+# 执行 CHANGE MASTER TO 启动复制
+# 使用命令代替my.cnf中的配置, 并允许以后指向别的主库时无须重启备库
+# MASTER_LOG_POS = 0 表示从日志开头读起
+mysql> CHANGE MASTER TO MASTER_HOST = '10.1.254.43',
+    -> MASTER_PORT = 9600,
+    -> MASTER_USER = 'repl',
+    -> MASTER_PASSWORD = 'p4ssword',
+    -> MASTER_LOG_FILE = 'mysql-bin.000001',
+    -> MASTER_LOG_POS = 0;
+```
+
+2. 查看备库状态
+```
+SHOW SLAVE STATUS\G;
+```
+
+```
+# 显示结果
+MySQL [(none)]> SHOW SLAVE STATUS\G;
+*************************** 1. row ***************************
+               Slave_IO_State: 
+                  Master_Host: 10.1.254.43
+                  Master_User: repl
+                  Master_Port: 9600
+                Connect_Retry: 60
+              Master_Log_File: mysql-bin.000001
+          Read_Master_Log_Pos: 4
+               Relay_Log_File: mysql-relay-bin.000001
+                Relay_Log_Pos: 4
+        Relay_Master_Log_File: mysql-bin.000001
+             Slave_IO_Running: No
+            Slave_SQL_Running: No
+              Replicate_Do_DB: 
+          Replicate_Ignore_DB: 
+           Replicate_Do_Table: 
+       Replicate_Ignore_Table: 
+      Replicate_Wild_Do_Table: 
+  Replicate_Wild_Ignore_Table: 
+                   Last_Errno: 0
+                   Last_Error: 
+                 Skip_Counter: 0
+          Exec_Master_Log_Pos: 4
+              Relay_Log_Space: 154
+              Until_Condition: None
+               Until_Log_File: 
+                Until_Log_Pos: 0
+           Master_SSL_Allowed: No
+           Master_SSL_CA_File: 
+           Master_SSL_CA_Path: 
+              Master_SSL_Cert: 
+            Master_SSL_Cipher: 
+               Master_SSL_Key: 
+        Seconds_Behind_Master: NULL
+Master_SSL_Verify_Server_Cert: No
+                Last_IO_Errno: 0
+                Last_IO_Error: 
+               Last_SQL_Errno: 0
+               Last_SQL_Error: 
+  Replicate_Ignore_Server_Ids: 
+             Master_Server_Id: 0
+                  Master_UUID: 
+             Master_Info_File: /data/mysql/mysql-5.7.32/data/master.info
+                    SQL_Delay: 0
+          SQL_Remaining_Delay: NULL
+      Slave_SQL_Running_State: 
+           Master_Retry_Count: 86400
+                  Master_Bind: 
+      Last_IO_Error_Timestamp: 
+     Last_SQL_Error_Timestamp: 
+               Master_SSL_Crl: 
+           Master_SSL_Crlpath: 
+           Retrieved_Gtid_Set: 
+            Executed_Gtid_Set: 
+                Auto_Position: 0
+         Replicate_Rewrite_DB: 
+                 Channel_Name: 
+           Master_TLS_Version: 
+1 row in set (0.00 sec)
+
+ERROR: No query specified
+```
+
+3. 启动复制
+```
+mysql> START SLAVE;
+```
+
+```
+# 显示结果
+MySQL [(none)]> SHOW SLAVE STATUS\G;
+*************************** 1. row ***************************
+               Slave_IO_State: Waiting for master to send event
+                  Master_Host: 10.1.254.43
+                  Master_User: repl
+                  Master_Port: 9600
+                Connect_Retry: 60
+              Master_Log_File: mysql-bin.000001
+          Read_Master_Log_Pos: 458
+               Relay_Log_File: mysql-relay-bin.000002
+                Relay_Log_Pos: 671
+        Relay_Master_Log_File: mysql-bin.000001
+             Slave_IO_Running: Yes
+            Slave_SQL_Running: Yes
+              Replicate_Do_DB: 
+          Replicate_Ignore_DB: 
+           Replicate_Do_Table: 
+       Replicate_Ignore_Table: 
+      Replicate_Wild_Do_Table: 
+  Replicate_Wild_Ignore_Table: 
+                   Last_Errno: 0
+                   Last_Error: 
+                 Skip_Counter: 0
+          Exec_Master_Log_Pos: 458
+              Relay_Log_Space: 878
+              Until_Condition: None
+               Until_Log_File: 
+                Until_Log_Pos: 0
+           Master_SSL_Allowed: No
+           Master_SSL_CA_File: 
+           Master_SSL_CA_Path: 
+              Master_SSL_Cert: 
+            Master_SSL_Cipher: 
+               Master_SSL_Key: 
+        Seconds_Behind_Master: 0
+Master_SSL_Verify_Server_Cert: No
+                Last_IO_Errno: 0
+                Last_IO_Error: 
+               Last_SQL_Errno: 0
+               Last_SQL_Error: 
+  Replicate_Ignore_Server_Ids: 
+             Master_Server_Id: 164186
+                  Master_UUID: ed21888f-4b2d-11eb-a196-08f1ea748c28
+             Master_Info_File: /data/mysql/mysql-5.7.32/data/master.info
+                    SQL_Delay: 0
+          SQL_Remaining_Delay: NULL
+      Slave_SQL_Running_State: Slave has read all relay log; waiting for more updates
+           Master_Retry_Count: 86400
+                  Master_Bind: 
+      Last_IO_Error_Timestamp: 
+     Last_SQL_Error_Timestamp: 
+               Master_SSL_Crl: 
+           Master_SSL_Crlpath: 
+           Retrieved_Gtid_Set: 
+            Executed_Gtid_Set: 
+                Auto_Position: 0
+         Replicate_Rewrite_DB: 
+                 Channel_Name: 
+           Master_TLS_Version: 
+1 row in set (0.00 sec)
+
+ERROR: No query specified
+```
+
+4. 主库上查询复制线程
+```
+SHOW PROCESSLIST\G;
+```
+
+```
+# 这里可以看到复制线程 id = 5 user = repl
+MySQL [(none)]> SHOW PROCESSLIST\G;
+*************************** 1. row ***************************
+     Id: 1
+   User: event_scheduler
+   Host: localhost
+     db: NULL
+Command: Daemon
+   Time: 1835
+  State: Waiting on empty queue
+   Info: NULL
+*************************** 2. row ***************************
+     Id: 5
+   User: repl
+   Host: 10.1.254.44:46550
+     db: NULL
+Command: Binlog Dump
+   Time: 366
+  State: Master has sent all binlog to slave; waiting for more updates
+   Info: NULL
+*************************** 3. row ***************************
+     Id: 6
+   User: root
+   Host: localhost
+     db: NULL
+Command: Query
+   Time: 0
+  State: starting
+   Info: SHOW PROCESSLIST
+3 rows in set (0.00 sec)
+
+ERROR: No query specified
+```
+
+
+
 ## Windows Zip版本安装
 
 ### 安装与配置
@@ -859,27 +1253,27 @@ default-time_zone = '+00:00'
 
 ```
 # 直接下载
-https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.31-winx64.zip
+https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.32-winx64.zip
 ```
 
 2. 解压
 
 ```
 # 如解压到E盘下的指定目录
-E:\data\mysql-5.7.31-winx64
+E:\data\mysql-5.7.32-winx64
 ```
 
 3. 配置环境变量
 
 ```
 # 将bin添加到系统变量 path最后面, 注意与其他变量使用;分开
-;E:\data\mysql-5.7.31-winx64\bin
+;E:\data\mysql-5.7.32-winx64\bin
 ```
 
 4. 创建配置文件 my.ini
 
 ```
-# 在E:\data\mysql-5.7.31-winx64目录下创建 my.ini
+# 在E:\data\mysql-5.7.32-winx64目录下创建 my.ini
 ```
 ```
 # 注意 my.ini 必须存为 ANSI编码格式, 其他格式可能无法启动服务
@@ -900,11 +1294,11 @@ lower_case_table_names = 1
 # 服务端口号 默认3306
 port = 3306
 
-# mysql安装根目录
-basedir = E:\data\mysql-5.7.31-winx64
+# mysql安装根目录 注意要两个\ 不然有的电脑会出错
+basedir = E:\\data\\mysql-5.7.32-winx64
 
 # mysql数据文件所在位置
-datadir = E:\data\mysql-5.7.31-winx64\data
+datadir = E:\\data\\mysql-5.7.32-winx64\\data
 
 # 设置mysql客户端默认字符集
 character-set-server=utf8
@@ -915,10 +1309,11 @@ collation-server=utf8_general_ci
 default-time_zone = '+00:00'
 
 # 只能用IP地址检查客户端的登录，不用主机名
-skip_name_resolve = 1
+# 注意在初始安装里要注释掉这里
+# skip_name_resolve = 1
 
 # SQL数据包发送的大小，如果有BLOB对象建议修改成1G
-max_allowed_packet = 10M
+max_allowed_packet = 20M
 
 # MySQL连接闲置超过一定时间后(单位：秒)将会被强行关闭
 # MySQL默认的wait_timeout  值为8个小时, interactive_timeout参数需要同时配置才能生效
@@ -940,11 +1335,11 @@ event_scheduler= ON
 #日志设置
 
 # 数据库错误日志文件
-log_error = E:\data\mysql-5.7.31-winx64\logs\error.log
+log_error = E:\data\mysql-5.7.32-winx64\logs\error.log
 
 # 慢查询sql日志设置
 slow_query_log = 1
-slow_query_log_file = E:\data\mysql-5.7.31-winx64\logs\slow.log
+slow_query_log_file = E:\data\mysql-5.7.32-winx64\logs\slow.log
 
 # 检查未使用到索引的sql
 log_queries_not_using_indexes = 1
@@ -974,11 +1369,13 @@ log_throttle_queries_not_using_indexes = 5
 sql_mode=NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
 ```
 
-5. 安装服务(服务名一般默认为MySQL)
+5. 安装服务(服务名一般默认为MySQL, 如果同一电脑安装多个mysql必须修改成不同服务名)
 
 ```
-# 进入目录, 如 E:\data\mysql-5.7.31-winx64\bin
+# 进入目录, 如 E:\data\mysql-5.7.32-winx64\bin
 # 按住shift右键点空白的地方进行命令行模式
+# 如 mysqld -install MySQL-7000
+# 使用 sc delete 服务名，删除当前服务
 mysqld -install
 ```
 ```
@@ -986,15 +1383,15 @@ mysqld -install
 # 如果报错Install/Remove of the Service Denied! 说明需要以管理员的身份进行安装
 # 如果提示找不到MSVCP120.dll,需要先安装vcredist运行库
 # 下载 vcredist 地址：https://www.microsoft.com/zh-CN/download/details.aspx?id=40784
-E:\data\mysql-5.7.31-winx64\bin>mysqld -install
+E:\data\mysql-5.7.32-winx64\bin>mysqld -install
 Service successfully installed.
 ```
 
 6. 启动服务
 
 ```
-# 需要先启动 否则无法完成初始化
-E:\data\mysql-5.7.31-winx64\bin>net start mysql
+# 需要先启动 否则无法完成初始化(在windows2019上没有初始化无法启动)
+E:\data\mysql-5.7.32-winx64\bin>net start mysql
 MySQL 服务正在启动 .
 MySQL 服务已经启动成功。
 ```
@@ -1003,17 +1400,17 @@ MySQL 服务已经启动成功。
 
 ```
 # MySQL5.7是不带data目录的，所以需要初始化MySQL，生产data目录
-# 使用mysqld --initialize 生成的密码在data目录下的：[pc名称].err文件中
+# 使用 mysqld --initialize 生成的密码在data目录下的：[pc名称].err文件中
 # 使用 mysqld --initialize-insecure 这个命令初始化root用户密码为空
 mysqld --initialize
 ```
 ```
 # 完成时没有提示
-E:\data\mysql-5.7.31-winx64\bin>mysqld --initialize
+E:\data\mysql-5.7.32-winx64\bin>mysqld --initialize
 ```
 ```
 # 如果data目录存在 会有以下提示
-E:\data\mysql-5.7.31-winx64\bin>mysqld --initialize
+E:\data\mysql-5.7.32-winx64\bin>mysqld --initialize
 2020-07-11T07:45:19.520057Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
 2020-07-11T07:45:19.526057Z 0 [ERROR] --initialize specified but the data directory has files in it. Aborting.
 2020-07-11T07:45:19.528057Z 0 [ERROR] Aborting
@@ -1026,7 +1423,7 @@ E:\data\mysql-5.7.31-winx64\bin>mysqld --initialize
 net start mysql
 ```
 ```
-E:\data\mysql-5.7.31-winx64\bin>net start mysql
+E:\data\mysql-5.7.32-winx64\bin>net start mysql
 MySQL 服务正在启动 .
 MySQL 服务已经启动成功。
 ```
@@ -1034,16 +1431,26 @@ MySQL 服务已经启动成功。
 ### 设置修改MySql密码
 
 ```
-# 随机密码在 E:\data\mysql-5.7.31-winx64\data\[计算机名].err中
+# 随机密码在 E:\data\mysql-5.7.32-winx64\data\[计算机名].err中
+# 如果指定了错误日志文件, 将会记录在错误文件中
 mysql -u root -p
 ```
+
+```
+# 连接出错 Host '::1' is not allowed to connect to this MySQL server
+原因是 my.ini 里启用了 skip_name_resolve
+1. 停止服务
+2. 注释掉 # skip_name_resolve = 1
+3. 启动服务
+```
+
 ```
 # 成功
-E:\data\mysql-5.7.31-winx64\bin>mysql -u root -p
+E:\data\mysql-5.7.32-winx64\bin>mysql -u root -p
 Enter password: ************ // 输入密码
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 2
-Server version: 5.7.31
+Server version: 5.7.32
 
 Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
 
@@ -1125,7 +1532,7 @@ net start mysql
 ```
 
 ```
-E:\data\mysql-5.7.31-winx64\bin>net start mysql
+E:\data\mysql-5.7.32-winx64\bin>net start mysql
 MySQL 服务正在启动 .
 MySQL 服务已经启动成功。
 ```
@@ -1136,7 +1543,7 @@ net stop mysql
 ```
 
 ```
-E:\data\mysql-5.7.31-winx64\bin>net stop mysql
+E:\data\mysql-5.7.32-winx64\bin>net stop mysql
 MySQL 服务正在停止.
 MySQL 服务已成功停止。
 ```
