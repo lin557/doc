@@ -10,20 +10,20 @@ yum install vim -y
 
 ## 安装
 
-1. 上官网或中文网下载最新稳定版本(http://www.redis.cn/)，当前文档使用的版本是 6.0.9
-2. 下载后（文件名 redis-6.0.9.tar.gz），上传到linux服务器上，或者直接在linux服务器上直接下载,下载命令如下，文档中下载到 /usr/local 目录下
+1. 上官网或中文网下载最新稳定版本(http://www.redis.cn/)，当前文档使用的版本是 6.0.12
+2. 下载后（文件名 redis-6.0.12.tar.gz），上传到linux服务器上，或者直接在linux服务器上直接下载,下载命令如下，文档中下载到 /usr/local 目录下
 ```
 # 没装wget 可以用 yum install wget 安装
 cd /usr/local
-wget http://download.redis.io/releases/redis-6.0.9.tar.gz
+wget http://download.redis.io/releases/redis-6.0.12.tar.gz
 ```
-3. 解压文件到 /usr/local/redis-6.0.9
+3. 解压文件到 /usr/local/redis-6.0.12
 ```
-tar xzf redis-6.0.9.tar.gz
+tar xzf redis-6.0.12.tar.gz
 ```
 4. 进入目录
 ```
-cd /usr/local/redis-6.0.9
+cd /usr/local/redis-6.0.12
 ```
 5. 下载的是源码版本, 需要编译后才能使用。编译需要gcc, 如果电脑没有安装gcc, 需先安装, 有就跳过
 ```
@@ -76,7 +76,7 @@ server.c:2919:15: error: ‘struct redisServer’ has no member named ‘aof_sta
 # 检查gcc版本 centos7默认是4.8.5 
 # 命令 gcc -v
 
-[root@tg-apps2 redis-6.0.9]# gcc -v
+[root@tg-apps2 redis-6.0.12]# gcc -v
 Using built-in specs.
 COLLECT_GCC=gcc
 COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/4.8.5/lto-wrapper
@@ -88,6 +88,11 @@ gcc version 4.8.5 20150623 (Red Hat 4.8.5-39) (GCC)
 
 ```
 # 更新gcc 升级到9.x
+
+# devtoolset-3对应gcc4.x.x版本
+# devtoolset-4对应gcc5.x.x版本
+# devtoolset-6对应gcc6.x.x版本
+# devtoolset-7对应gcc7.x.x版本
 
 # 安装
 yum -y install centos-release-scl
@@ -110,7 +115,7 @@ make
 ```
 Hint: It's a good idea to run 'make test' ;)
 
-make[1]: Leaving directory `/usr/local/redis-6.0.9/src'
+make[1]: Leaving directory `/usr/local/redis-6.0.12/src'
 ```
 7. 运行 make test 以验证是否成功。如果有错误提示，要据提示进行操作make test
 ```
@@ -141,16 +146,16 @@ Expected condition '$max_latency <= 120' to be true (231 <= 120)
 Expected '1' to be equal to '0'
 Cleanup: may take some time... OK
 make[1]: *** [test] Error 1
-make[1]: Leaving directory `/usr/local/redis-6.0.9/src'
+make[1]: Leaving directory `/usr/local/redis-6.0.12/src'
 make: *** [test] Error 2
 ```
 都是WARNING可以不管 不影响使用
 
 ## 配置
 
-1. 进入安装目录, 文档中使用的目录是 /usr/local/redis-6.0.9
+1. 进入安装目录, 文档中使用的目录是 /usr/local/redis-6.0.12
 ```
-cd /usr/local/redis-6.0.9
+cd /usr/local/redis-6.0.12
 ```
 
 2. 找到配置文件进行编辑
@@ -189,7 +194,7 @@ port 6379
 再次执行 "3" 中的命令启动， 看到以下提示说明修改成功，如果端口被占用是有错误提示的。
 
 ```
-Redis 6.0.9 (00000000/0) 64 bit
+Redis 6.0.12 (00000000/0) 64 bit
 Running in standalone mode
 Port: 7000
 ```
@@ -237,9 +242,9 @@ appendonly yes
 
 ###  启动
 
-1. 进入安装目录, 文档中使用的目录是 /usr/local/redis-6.0.9
+1. 进入安装目录, 文档中使用的目录是 /usr/local/redis-6.0.12
 ```
-cd /usr/local/redis-6.0.9
+cd /usr/local/redis-6.0.12
 ```
 
 2. 启动
@@ -302,9 +307,9 @@ sysctl -p
 Centos7时默认启用，用来提升内存性能, Oracle、MariaDB、MongoDB、VoltDB、Redis等等在使用时要求禁用
 ```
 # 查看是否启用
-[root@VM_157_185_centos redis-6.0.9]# cat /sys/kernel/mm/transparent_hugepage/defrag
+[root@VM_157_185_centos redis-6.0.12]# cat /sys/kernel/mm/transparent_hugepage/defrag
 [always] madvise never
-[root@VM_157_185_centos redis-6.0.9]# cat /sys/kernel/mm/transparent_hugepage/enabled
+[root@VM_157_185_centos redis-6.0.12]# cat /sys/kernel/mm/transparent_hugepage/enabled
 [always] madvise never
 ```
 禁用方法
@@ -359,7 +364,7 @@ redis-server /usr/local/redis-3.2.6/redis_cluster/7005/redis.conf
 2. 使用命令行退出
 ```
 // 进入目录
-/usr/local/redis-6.0.9
+/usr/local/redis-6.0.12
 // 用redis-cli访问
 ./src/redis-cli -h 127.0.0.1 -p 7000
 // 输入密码 如果没有密码 可以跳过这一步
@@ -387,8 +392,9 @@ After=network.target
 
 [Service]
 PIDFile=/var/run/redis_9700.pid
-ExecStart=/usr/local/redis-6.0.9/src/redis-server /usr/local/redis-6.0.9/redis.conf
-ExecStop=/usr/local/redis-6.0.9/src/redis-cli -a passwd shutdown
+ExecStart=/usr/local/redis-6.0.12/src/redis-server /usr/local/redis-6.0.12/redis.conf
+# passwd 表密码
+ExecStop=/usr/local/redis-6.0.12/src/redis-cli -a passwd shutdown
 ExecReload=/bin/kill -s HUP $MAINPID
 
 [Install]
@@ -439,7 +445,7 @@ systemctl stop redis.service
 
 1. 进入redis的src目录
 ```
-cd /usr/local/redis-6.0.9/src
+cd /usr/local/redis-6.0.12/src
 ```
 2. 打开redis-cli
 ```

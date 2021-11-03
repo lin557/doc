@@ -645,21 +645,12 @@ Modulus=A78BF7B7979620DE6F03A33DA384C2922DC73709D9C0AC28543FCABDE40F04D...
 
 ### 强制跳转https
 
-```
-
+```sh
 server {
-	listen       443;	#ssl端口
-	listen       80;	#用户习惯用http访问，加上80，后面通过497状态码让它自动跳到443端口
-	server_name  test.com;
-	#为一个server{......}开启ssl支持
-	ssl                  on;
-	#指定PEM格式的证书文件 
-	ssl_certificate      /etc/nginx/test.pem; 
-	#指定PEM格式的私钥文件
-	ssl_certificate_key  /etc/nginx/test.key;
-	
-	#让http请求重定向到https请求	
-	error_page 497	https://$host$uri?$args;
+    listen       80;
+    server_name  transcodegroup.cn;
+    # 跳转到43
+    rewrite ^(.*)$ https://$host$1  permanent;
 }
 ```
 
@@ -711,5 +702,20 @@ Access to XMLHttpRequest at 'https://www.baidu.com/' (redirected from 'http://ww
 # 表示可能服务端设置了跨域，nginx也设置了跨域引起
 # 解决办法: 去掉其中一个的跨域配置
 The 'Access-Control-Allow-Origin' header contains multiple values'*, *', but only one is allowed.
+```
+
+
+
+### 413 Request Entity Too Large
+
+```
+# nginx默认文件上传大小为1m
+# 在http{}段中加入 20m为允许最大上传的大小。
+
+http {
+    ...
+    client_max_body_size 20m;
+    ...
+}
 ```
 
